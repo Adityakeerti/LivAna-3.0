@@ -71,9 +71,16 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              height: 90,
+              height: 100,
               decoration: BoxDecoration(
-                color: Colors.deepPurple.withOpacity(0.1),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colors.deepPurple.withOpacity(0.8),
+                    Colors.purple.withOpacity(0.6),
+                  ],
+                ),
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(16),
                 ),
@@ -85,13 +92,13 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
                     Icon(
                       Icons.school,
                       size: 36,
-                      color: Colors.deepPurple.withOpacity(0.5),
+                      color: Colors.white.withOpacity(0.9),
                     ),
                     const SizedBox(height: 6),
                     Text(
                       community.name,
                       style: const TextStyle(
-                        color: Colors.deepPurple,
+                        color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
                       ),
@@ -104,26 +111,37 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     community.description,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 11,
-                      color: Colors.grey,
+                      color: Colors.grey[700],
+                      height: 1.3,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 6),
-                  Text(
-                    '${community.memberCount} members',
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 11,
-                    ),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.people,
+                        size: 14,
+                        color: Colors.grey[600],
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${community.memberCount} members',
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 8),
                   SizedBox(
@@ -143,11 +161,15 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        padding: EdgeInsets.zero,
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(horizontal: 0),
                       ),
                       child: const Text(
-                        'Join',
-                        style: TextStyle(fontSize: 12),
+                        'Join Community',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ),
@@ -164,77 +186,111 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Find Your Community'),
+        title: const Text(
+          'Find Your Community',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
         backgroundColor: Colors.deepPurple,
         elevation: 0,
       ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  hintText: 'Search communities...',
-                  prefixIcon: const Icon(Icons.search),
-                  border: OutlineInputBorder(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.deepPurple.withOpacity(0.1),
+              Colors.white,
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.1),
+                        spreadRadius: 1,
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
-                  filled: true,
-                  fillColor: Colors.grey[100],
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    _searchQuery = value;
-                  });
-                },
-              ),
-            ),
-            Expanded(
-              child: _filteredCommunities.isEmpty
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.search_off,
-                            size: 48,
-                            color: Colors.grey,
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            _searchQuery.isEmpty
-                                ? 'No communities available yet'
-                                : 'No communities found for "$_searchQuery"',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ],
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: 'Search communities...',
+                      prefixIcon: const Icon(Icons.search, color: Colors.deepPurple),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
                       ),
-                    )
-                  : GridView.builder(
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        top: 0,
-                        bottom: 16,
-                      ),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        childAspectRatio: 0.7,
-                        crossAxisSpacing: 16,
-                        mainAxisSpacing: 16,
-                      ),
-                      itemCount: _filteredCommunities.length,
-                      itemBuilder: (context, index) {
-                        return _buildCommunityCard(_filteredCommunities[index]);
-                      },
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding: const EdgeInsets.symmetric(vertical: 15),
                     ),
-            ),
-          ],
+                    onChanged: (value) {
+                      setState(() {
+                        _searchQuery = value;
+                      });
+                    },
+                  ),
+                ),
+              ),
+              Expanded(
+                child: _filteredCommunities.isEmpty
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.search_off,
+                              size: 48,
+                              color: Colors.grey[400],
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              _searchQuery.isEmpty
+                                  ? 'No communities available yet'
+                                  : 'No communities found for "$_searchQuery"',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : GridView.builder(
+                        padding: const EdgeInsets.only(
+                          left: 16,
+                          right: 16,
+                          top: 0,
+                          bottom: 16,
+                        ),
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          childAspectRatio: 0.7,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                        ),
+                        itemCount: _filteredCommunities.length,
+                        itemBuilder: (context, index) {
+                          return _buildCommunityCard(_filteredCommunities[index]);
+                        },
+                      ),
+              ),
+            ],
+          ),
         ),
       ),
     );
