@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "458792217914",
+    "project_id": "livana-461",
+    "storage_bucket": "livana-461.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:458792217914:android:e88baca0757c1a15757403",
+        "android_client_info": {
+          "package_name": "com.example.livana"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQNnnh--caj9dvmEjftZh3A8cv3OT2lcE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
