@@ -10,7 +10,7 @@ import 'screens/student/service_selection_screen.dart';
 import 'screens/student/pgs_screen.dart';
 import 'screens/student/mess_screen.dart';
 import 'screens/student/grocery_screen.dart';
-import 'screens/student/forum_screen.dart';
+import 'screens/forum_screen.dart';
 import 'screens/business/business_login_screen.dart';
 import 'screens/business/business_selection_screen.dart';
 import 'screens/business/business_form_landing_screen.dart';
@@ -55,7 +55,7 @@ class LivAnaApp extends StatelessWidget {
         '/pgs': (context) => PgsScreen(),
         '/mess': (context) => MessScreen(),
         '/grocery': (context) => GroceryScreen(),
-        '/forum': (context) => ForumScreen(),
+        '/forum': (context) => const ForumScreen(),
 
         // Business Routes
         '/business': (context) => BusinessLoginScreen(),
