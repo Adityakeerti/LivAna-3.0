@@ -8,35 +8,12 @@ class StudentLoginScreen extends StatefulWidget {
   _StudentLoginScreenState createState() => _StudentLoginScreenState();
 }
 
-class _StudentLoginScreenState extends State<StudentLoginScreen> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<Color?> _colorAnimation;
+class _StudentLoginScreenState extends State<StudentLoginScreen> {
   final AuthService _authService = AuthService();
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(seconds: 10),
-      vsync: this,
-    )..repeat(reverse: true);
-    
-    _colorAnimation = ColorTween(
-      begin: Colors.deepPurple.shade50,
-      end: Colors.blue.shade50,
-    ).animate(_controller);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
 
   Future<void> _signInAsGuest(BuildContext context) async {
     try {
       await _authService.signInAsGuest();
-      // Navigate directly to student home
       Navigator.pushReplacementNamed(context, '/studentHome');
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -47,70 +24,100 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> with SingleTick
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _colorAnimation,
-      builder: (context, child) {
-        return Scaffold(
-          backgroundColor: _colorAnimation.value,
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            leading: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () => Navigator.pop(context),
-            ),
+    return Scaffold(
+      backgroundColor: const Color(0xFFF8F9FA),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFFF8F9FA),
+              Color(0xFFE9ECEF),
+            ],
           ),
-          body: Center(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Welcome to Livana',
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.deepPurple,
+        ),
+        child: Center(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 150,
+                    height: 150,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.circular(20),
+                      image: const DecorationImage(
+                        image: AssetImage('assets/images/livana_logo.png'),
+                        fit: BoxFit.cover,
                       ),
-                    ).animate().fadeIn(duration: 600.ms).slideY(),
-                    SizedBox(height: 20),
-                    Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.circular(20),
-                        image: DecorationImage(
-                          image: AssetImage('assets/images/livana_logo.png'),
-                          fit: BoxFit.cover,
+                    ),
+                  ).animate().fadeIn(duration: 600.ms).scale(),
+                  const SizedBox(height: 30),
+                  const Text(
+                    'Welcome to Livana',
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF2A2A2A),
+                      shadows: [
+                        Shadow(
+                          color: Colors.white,
+                          offset: Offset(0, 2),
+                          blurRadius: 4,
                         ),
+                      ],
+                    ),
+                  ).animate().fadeIn(duration: 600.ms).slideY(),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Your one-stop solution for student living',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Color(0xFF2A2A2A),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.2),
+                  const SizedBox(height: 40),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: GoogleSignInButton(),
+                  ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.3),
+                  const SizedBox(height: 20),
+                  TextButton(
+                    onPressed: () => _signInAsGuest(context),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF6C5CE7),
+                        borderRadius: BorderRadius.circular(30),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF6C5CE7).withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
-                    ).animate().fadeIn(duration: 600.ms).scale(),
-                    SizedBox(height: 30),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      child: GoogleSignInButton(),
-                    ).animate().fadeIn(duration: 600.ms).slideY(),
-                    SizedBox(height: 16),
-                    TextButton(
-                      onPressed: () => _signInAsGuest(context),
-                      child: Text(
+                      child: const Text(
                         'Continue as Guest',
                         style: TextStyle(
-                          color: Colors.deepPurple,
+                          color: Colors.white,
                           fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ).animate().fadeIn(duration: 600.ms),
-                  ],
-                ),
+                    ),
+                  ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.4),
+                ],
               ),
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }

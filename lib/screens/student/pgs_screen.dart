@@ -1,188 +1,492 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:provider/provider.dart';
+import '../../providers/theme_provider.dart';
+import '../../widgets/custom_drawer.dart';
 
-class PgsScreen extends StatelessWidget {
+class PgsScreen extends StatefulWidget {
+  const PgsScreen({Key? key}) : super(key: key);
+
+  @override
+  _PgsScreenState createState() => _PgsScreenState();
+}
+
+class _PgsScreenState extends State<PgsScreen> {
+  final List<Map<String, dynamic>> _pgs = [
+    {
+      'name': 'Sunshine PG',
+      'location': 'Near University',
+      'price': '₹5000/month',
+      'amenities': ['WiFi', 'AC', 'Food', 'Laundry', 'Parking'],
+      'rating': 4.5,
+      'image': 'assets/images/pg1.jpg',
+      'description': 'A comfortable and well-maintained PG with all modern amenities.',
+      'owner': 'Mr. Sharma',
+      'phone': '+91 9876543210',
+    },
+    {
+      'name': 'Green Valley PG',
+      'location': 'City Center',
+      'price': '₹6000/month',
+      'amenities': ['WiFi', 'AC', 'Food', 'Gym', 'Parking'],
+      'rating': 4.8,
+      'image': 'assets/images/pg2.jpg',
+      'description': 'Premium PG with gym facilities and 24/7 security.',
+      'owner': 'Ms. Patel',
+      'phone': '+91 9876543211',
+    },
+    {
+      'name': 'Royal PG',
+      'location': 'Near College',
+      'price': '₹4500/month',
+      'amenities': ['WiFi', 'Food', 'Laundry', 'Parking'],
+      'rating': 4.2,
+      'image': 'assets/images/pg3.jpg',
+      'description': 'Affordable PG with basic amenities and good food.',
+      'owner': 'Mr. Singh',
+      'phone': '+91 9876543212',
+    },
+  ];
+
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDarkMode = themeProvider.isDarkMode;
+
     return Scaffold(
+      backgroundColor: isDarkMode ? const Color(0xFF1A1A1A) : const Color(0xFFF8F9FA),
+      drawer: const CustomDrawer(),
       appBar: AppBar(
-        title: Text('PGs List'),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: Icon(
+              Icons.menu,
+              color: isDarkMode ? Colors.white : const Color(0xFF2A2A2A),
+            ),
+            onPressed: () => Scaffold.of(context).openDrawer(),
+          ),
+        ),
+        title: Text(
+          'PGs List',
+          style: TextStyle(
+            color: isDarkMode ? Colors.white : const Color(0xFF2A2A2A),
+          ),
+        ),
       ),
-      body: ListView.builder(
-        padding: EdgeInsets.all(16),
-        itemCount: 3, // Example: 3 PGs
-        itemBuilder: (context, index) {
-          return Card(
-            margin: EdgeInsets.only(bottom: 16),
-            elevation: 4,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // PG Image Placeholder
-                Container(
-                  height: 200,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-                  ),
-                  child: Center(
-                    child: Icon(
-                      Icons.image,
-                      size: 50,
-                      color: Colors.grey[600],
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: isDarkMode
+                ? [const Color(0xFF1A1A1A), const Color(0xFF2A2A2A)]
+                : [const Color(0xFFF8F9FA), const Color(0xFFE9ECEF)],
+          ),
+        ),
+        child: ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: _pgs.length,
+          itemBuilder: (context, index) {
+            final pg = _pgs[index];
+            return Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              color: isDarkMode ? const Color(0xFF2A2A2A) : Colors.white,
+              margin: const EdgeInsets.only(bottom: 16),
+              child: InkWell(
+                onTap: () => _showPgDetails(context, pg, isDarkMode),
+                borderRadius: BorderRadius.circular(15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ClipRRect(
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
+                      child: Image.asset(
+                        pg['image'],
+                        height: 200,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            height: 200,
+                            color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade200,
+                            child: Center(
+                              child: Icon(
+                                Icons.image_not_supported,
+                                size: 50,
+                                color: isDarkMode ? Colors.white70 : Colors.grey.shade400,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     ),
-                  ),
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  pg['name'],
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: isDarkMode ? Colors.white : const Color(0xFF2A2A2A),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF2ECC71),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(
+                                  pg['price'],
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Icon(Icons.location_on, size: 16, color: isDarkMode ? Colors.white70 : Colors.grey.shade700),
+                              const SizedBox(width: 4),
+                              Expanded(
+                                child: Text(
+                                  pg['location'],
+                                  style: TextStyle(
+                                    color: isDarkMode ? Colors.white70 : Colors.grey.shade700,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Wrap(
+                            spacing: 8,
+                            children: pg['amenities'].map<Widget>((amenity) {
+                              return Chip(
+                                label: Text(
+                                  amenity,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: isDarkMode ? Colors.white : const Color(0xFF6C5CE7),
+                                  ),
+                                ),
+                                backgroundColor: isDarkMode 
+                                    ? const Color(0xFF6C5CE7).withOpacity(0.2)
+                                    : const Color(0xFF6C5CE7).withOpacity(0.1),
+                              );
+                            }).toList(),
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  const Icon(Icons.star, color: Colors.amber, size: 20),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    pg['rating'].toString(),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: isDarkMode ? Colors.white : const Color(0xFF2A2A2A),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.phone, color: Color(0xFF2ECC71)),
+                                onPressed: () => launchUrl(Uri.parse('tel:${pg['phone']}')),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // PG Name and Price
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'PG ${index + 1}',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: Colors.deepPurple,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              '₹${(index + 1) * 5000}/month',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 12),
-                      
-                      // Amenities
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: [
-                            _buildAmenityChip(Icons.wifi, 'Wi-Fi'),
-                            _buildAmenityChip(Icons.local_laundry_service, 'Washing Machine'),
-                            _buildAmenityChip(Icons.ac_unit, 'Cooler'),
-                            _buildAmenityChip(Icons.water_drop, 'Water Purifier'),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 16),
-                      
-                      // Contact and Location
-                      Row(
-                        children: [
-                          Expanded(
-                            child: ElevatedButton.icon(
-                              onPressed: () {
-                                // Implement call functionality
-                                launchUrl(Uri.parse('tel:+919876543210'));
-                              },
-                              icon: Icon(Icons.phone),
-                              label: Text('Call Owner'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green,
-                                foregroundColor: Colors.white,
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 8),
-                          Expanded(
-                            child: ElevatedButton.icon(
-                              onPressed: () {
-                                // Implement map functionality
-                                launchUrl(Uri.parse('https://maps.google.com'));
-                              },
-                              icon: Icon(Icons.location_on),
-                              label: Text('View Location'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blue,
-                                foregroundColor: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 12),
-                      
-                      // Nearby Places
-                      Text(
-                        'Nearby Places:',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        '• College (500m)\n• Market (1km)\n• Bus Stop (200m)',
-                        style: TextStyle(color: Colors.grey[700]),
-                      ),
-                      SizedBox(height: 12),
-                      
-                      // Reviews
-                      Row(
-                        children: [
-                          Icon(Icons.star, color: Colors.amber, size: 20),
-                          SizedBox(width: 4),
-                          Text(
-                            '4.5 (120 reviews)',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey[700],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
+              ),
+            ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.1);
+          },
+        ),
       ),
     );
   }
 
-  Widget _buildAmenityChip(IconData icon, String label) {
-    return Container(
-      margin: EdgeInsets.only(right: 8),
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: Colors.deepPurple.shade50,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 16, color: Colors.deepPurple),
-          SizedBox(width: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.deepPurple,
+  void _showPgDetails(BuildContext context, Map<String, dynamic> pg, bool isDarkMode) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        height: MediaQuery.of(context).size.height * 0.8,
+        decoration: BoxDecoration(
+          color: isDarkMode ? const Color(0xFF2A2A2A) : Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          children: [
+            Container(
+              height: 4,
+              width: 40,
+              margin: const EdgeInsets.only(top: 20),
+              decoration: BoxDecoration(
+                color: isDarkMode ? Colors.white30 : Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(2),
+              ),
             ),
-          ),
-        ],
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      pg['name'],
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: isDarkMode ? Colors.white : const Color(0xFF2A2A2A),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      pg['location'],
+                      style: TextStyle(
+                        color: isDarkMode ? Colors.white70 : Colors.grey.shade600,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: Image.asset(
+                        pg['image'],
+                        height: 200,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            height: 200,
+                            color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade200,
+                            child: Center(
+                              child: Icon(
+                                Icons.image_not_supported,
+                                size: 50,
+                                color: isDarkMode ? Colors.white70 : Colors.grey.shade400,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      'Description',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: isDarkMode ? Colors.white : const Color(0xFF2A2A2A),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      pg['description'],
+                      style: TextStyle(
+                        color: isDarkMode ? Colors.white70 : Colors.grey.shade700,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      'Amenities',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: isDarkMode ? Colors.white : const Color(0xFF2A2A2A),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      children: pg['amenities'].map<Widget>((amenity) {
+                        return Chip(
+                          label: Text(
+                            amenity,
+                            style: TextStyle(
+                              color: isDarkMode ? Colors.white : const Color(0xFF6C5CE7),
+                            ),
+                          ),
+                          backgroundColor: isDarkMode 
+                              ? const Color(0xFF6C5CE7).withOpacity(0.2)
+                              : const Color(0xFF6C5CE7).withOpacity(0.1),
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        // Handle view location
+                        launchUrl(Uri.parse('https://www.google.com/maps'));
+                      },
+                      icon: const Icon(Icons.location_on, color: Colors.white),
+                      label: const Text(
+                        'View Location',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF3498DB),
+                        minimumSize: const Size(double.infinity, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      'Contact Information',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: isDarkMode ? Colors.white : const Color(0xFF2A2A2A),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    ListTile(
+                      leading: Icon(
+                        Icons.person,
+                        color: isDarkMode ? Colors.white70 : Colors.grey.shade700,
+                      ),
+                      title: Text(
+                        pg['owner'],
+                        style: TextStyle(
+                          color: isDarkMode ? Colors.white : Colors.grey.shade800,
+                        ),
+                      ),
+                    ),
+                    ListTile(
+                      leading: Icon(
+                        Icons.phone,
+                        color: isDarkMode ? Colors.white70 : Colors.grey.shade700,
+                      ),
+                      title: Text(
+                        pg['phone'],
+                        style: TextStyle(
+                          color: isDarkMode ? Colors.white : Colors.grey.shade800,
+                        ),
+                      ),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.phone, color: Color(0xFF2ECC71)),
+                        onPressed: () => launchUrl(Uri.parse('tel:${pg['phone']}')),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      'Reviews',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: isDarkMode ? Colors.white : const Color(0xFF2A2A2A),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          TextField(
+                            maxLines: 2,
+                            decoration: InputDecoration(
+                              hintText: 'Write your review here...',
+                              hintStyle: TextStyle(
+                                color: isDarkMode ? Colors.white54 : Colors.grey.shade600,
+                              ),
+                              border: InputBorder.none,
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                            ),
+                            style: TextStyle(
+                              color: isDarkMode ? Colors.white : Colors.black,
+                              fontSize: 14,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: List.generate(5, (index) {
+                                  return IconButton(
+                                    icon: Icon(
+                                      Icons.star,
+                                      color: Colors.amber,
+                                      size: 24,
+                                    ),
+                                    onPressed: () {
+                                      // Handle star rating
+                                    },
+                                    padding: const EdgeInsets.all(4),
+                                  );
+                                }),
+                              ),
+                              Container(
+                                width: 100,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    // Handle post review
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF6C5CE7),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  ),
+                                  child: const Text(
+                                    'Post Review',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

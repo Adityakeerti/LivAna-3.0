@@ -36,8 +36,8 @@ class _BusinessLoginScreenState extends State<BusinessLoginScreen> with SingleTi
   Future<void> _signInAsGuest(BuildContext context) async {
     try {
       await _authService.signInAsGuest();
-      // Navigate directly to business selection
-      Navigator.pushReplacementNamed(context, '/businessSelect');
+      // Navigate directly to business form landing screen
+      Navigator.pushReplacementNamed(context, '/businessForm');
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: ${e.toString()}')),
