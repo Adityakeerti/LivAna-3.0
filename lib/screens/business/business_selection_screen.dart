@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'business_form_landing_screen.dart';
+import '../../widgets/custom_drawer.dart';
 
 class BusinessSelectionScreen extends StatefulWidget {
   @override
@@ -38,15 +39,14 @@ class _BusinessSelectionScreenState extends State<BusinessSelectionScreen> with 
     return AnimatedBuilder(
       animation: _colorAnimation,
       builder: (context, child) {
+        final theme = Theme.of(context);
+        final isDarkMode = theme.brightness == Brightness.dark;
         return Scaffold(
-          backgroundColor: _colorAnimation.value,
+          backgroundColor: theme.scaffoldBackgroundColor,
+          drawer: const CustomDrawer(),
           appBar: AppBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
-            leading: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () => Navigator.pop(context),
-            ),
           ),
           body: SingleChildScrollView(
             child: Padding(
@@ -56,16 +56,15 @@ class _BusinessSelectionScreenState extends State<BusinessSelectionScreen> with 
                 children: [
                   Text(
                     'Select your Business Type',
-                    style: TextStyle(
+                    style: theme.textTheme.titleLarge?.copyWith(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      color: Colors.deepPurple,
                     ),
                   ).animate().fadeIn(duration: 600.ms).slideY(),
                   SizedBox(height: 30),
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: theme.cardColor,
                       borderRadius: BorderRadius.circular(15),
                       boxShadow: [
                         BoxShadow(
@@ -102,7 +101,7 @@ class _BusinessSelectionScreenState extends State<BusinessSelectionScreen> with 
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         minimumSize: Size(double.infinity, 50),
-                        backgroundColor: Colors.deepPurple,
+                        backgroundColor: theme.primaryColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
@@ -119,7 +118,7 @@ class _BusinessSelectionScreenState extends State<BusinessSelectionScreen> with 
                       },
                       child: Text(
                         'Continue',
-                        style: TextStyle(
+                        style: theme.textTheme.bodyLarge?.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
@@ -136,6 +135,7 @@ class _BusinessSelectionScreenState extends State<BusinessSelectionScreen> with 
   }
 
   Widget _buildBusinessTypeCard(String title, IconData icon, String value) {
+    final theme = Theme.of(context);
     final isSelected = selectedBusinessType == value;
     return InkWell(
       onTap: () {
@@ -146,7 +146,7 @@ class _BusinessSelectionScreenState extends State<BusinessSelectionScreen> with 
       child: Container(
         padding: EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.deepPurple.shade50 : Colors.white,
+          color: isSelected ? theme.primaryColor.withOpacity(0.1) : theme.cardColor,
           borderRadius: BorderRadius.circular(15),
         ),
         child: Row(
@@ -154,22 +154,22 @@ class _BusinessSelectionScreenState extends State<BusinessSelectionScreen> with 
             Icon(
               icon,
               size: 30,
-              color: Colors.deepPurple,
+              color: theme.primaryColor,
             ),
             SizedBox(width: 15),
             Text(
               title,
-              style: TextStyle(
+              style: theme.textTheme.bodyLarge?.copyWith(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
-                color: Colors.deepPurple,
+                color: theme.primaryColor,
               ),
             ),
             Spacer(),
             if (isSelected)
               Icon(
                 Icons.check_circle,
-                color: Colors.deepPurple,
+                color: theme.primaryColor,
               ),
           ],
         ),

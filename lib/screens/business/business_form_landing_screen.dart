@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../widgets/custom_drawer.dart';
 
 class BusinessFormLandingScreen extends StatefulWidget {
   final String businessType;
@@ -37,18 +38,33 @@ class _BusinessFormLandingScreenState extends State<BusinessFormLandingScreen> w
 
   @override
   Widget build(BuildContext context) {
+    // Assign form links based on business type
+    String formUrl;
+    switch (widget.businessType.toLowerCase()) {
+      case 'pg':
+        formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSfJBlqoYBFDEywaaJ1RkZ73yMxRSnyNUYhCdU4VjQTNNsOCWA/viewform?usp=sharing';
+        break;
+      case 'mess':
+        formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSfJBlqoYBFDEywaaJ1RkZ73yMxRSnyNUYhCdU4VjQTNNsOCWA/viewform?usp=sharing';
+        break;
+      case 'grocery':
+        formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSfJBlqoYBFDEywaaJ1RkZ73yMxRSnyNUYhCdU4VjQTNNsOCWA/viewform?usp=sharing';
+        break;
+      default:
+        formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSfJBlqoYBFDEywaaJ1RkZ73yMxRSnyNUYhCdU4VjQTNNsOCWA/viewform?usp=sharing';
+    }
+
     return AnimatedBuilder(
       animation: _colorAnimation,
       builder: (context, child) {
+        final theme = Theme.of(context);
+        final isDarkMode = theme.brightness == Brightness.dark;
         return Scaffold(
-          backgroundColor: _colorAnimation.value,
+          backgroundColor: theme.scaffoldBackgroundColor,
+          drawer: const CustomDrawer(),
           appBar: AppBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
-            leading: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () => Navigator.pop(context),
-            ),
           ),
           body: Center(
             child: SingleChildScrollView(
@@ -73,19 +89,18 @@ class _BusinessFormLandingScreenState extends State<BusinessFormLandingScreen> w
                     Text(
                       'Complete Your ${widget.businessType} Registration',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: theme.textTheme.titleLarge?.copyWith(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Colors.deepPurple,
                       ),
                     ).animate().fadeIn(duration: 600.ms).slideY(),
                     SizedBox(height: 20),
                     Text(
                       'Please fill out the form to complete your registration process. This will help us understand your business better and provide you with the best services.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         fontSize: 16,
-                        color: Colors.deepPurple.shade700,
+                        color: isDarkMode ? Colors.white70 : Colors.deepPurple.shade700,
                       ),
                     ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.2),
                     SizedBox(height: 40),
@@ -94,16 +109,15 @@ class _BusinessFormLandingScreenState extends State<BusinessFormLandingScreen> w
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           minimumSize: Size(double.infinity, 50),
-                          backgroundColor: Colors.deepPurple,
+                          backgroundColor: theme.primaryColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
                         ),
                         onPressed: () async {
-                          const url = 'https://docs.google.com/forms/d/e/1FAIpQLScBSsRexSk-dzmQqv9KjAf4pI3Xeekf3E_U2ayqAMz_53J7Ew/viewform?usp=sharing';
                           try {
                             await launchUrl(
-                              Uri.parse(url),
+                              Uri.parse(formUrl),
                               mode: LaunchMode.externalApplication,
                             );
                           } catch (e) {
@@ -114,7 +128,7 @@ class _BusinessFormLandingScreenState extends State<BusinessFormLandingScreen> w
                         },
                         child: Text(
                           'Open Registration Form',
-                          style: TextStyle(
+                          style: theme.textTheme.bodyLarge?.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: 16,

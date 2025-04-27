@@ -40,7 +40,7 @@ class GoogleSignInButton extends StatelessWidget {
       if (isStudentFlow) {
         Navigator.pushReplacementNamed(context, '/studentName');
       } else {
-        Navigator.pushReplacementNamed(context, '/businessForm');
+        Navigator.pushReplacementNamed(context, '/businessSelection');
       }
     } catch (e) {
       print('Error during sign in: $e');
