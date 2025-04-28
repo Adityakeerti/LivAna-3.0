@@ -341,81 +341,214 @@ class _MessScreenState extends State<MessScreen> {
                   showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
-                      title: Text('Your Cart'),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      title: Container(
+                        padding: EdgeInsets.symmetric(vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.deepPurple,
+                          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                        ),
+                        child: Center(
+                          child: Text(
+                            'Your Cart',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
                       content: SingleChildScrollView(
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            ...cartItems.entries.map((entry) {
-                              if (entry.value > 0) {
-                                // Find the price of the item
-                                double itemPrice = 0;
-                                for (var mess in messes) {
-                                  var thali = mess.thaliOptions.firstWhere(
-                                    (t) => t.name == entry.key,
-                                    orElse: () => ThaliOption(name: '', price: 0),
-                                  );
-                                  if (thali.name.isNotEmpty) {
-                                    itemPrice = thali.price;
-                                    break;
+                            if (cartItems.isEmpty)
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 20),
+                                child: Column(
+                                  children: [
+                                    Icon(
+                                      Icons.shopping_cart_outlined,
+                                      size: 60,
+                                      color: Colors.grey.shade400,
+                                    ),
+                                    SizedBox(height: 16),
+                                    Text(
+                                      'Your cart is empty',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.grey.shade600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            else ...[
+                              ...cartItems.entries.map((entry) {
+                                if (entry.value > 0) {
+                                  double itemPrice = 0;
+                                  for (var mess in messes) {
+                                    var thali = mess.thaliOptions.firstWhere(
+                                      (t) => t.name == entry.key,
+                                      orElse: () => ThaliOption(name: '', price: 0),
+                                    );
+                                    if (thali.name.isNotEmpty) {
+                                      itemPrice = thali.price;
+                                      break;
+                                    }
+                                    var menuItem = mess.menuItems.firstWhere(
+                                      (m) => m.name == entry.key,
+                                      orElse: () => MenuItem(name: '', price: 0),
+                                    );
+                                    if (menuItem.name.isNotEmpty) {
+                                      itemPrice = menuItem.price;
+                                      break;
+                                    }
                                   }
-                                  var menuItem = mess.menuItems.firstWhere(
-                                    (m) => m.name == entry.key,
-                                    orElse: () => MenuItem(name: '', price: 0),
+                                  return Container(
+                                    margin: EdgeInsets.only(bottom: 12),
+                                    padding: EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.shade100,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                entry.key,
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              Text(
+                                                '₹${itemPrice.toStringAsFixed(2)} each',
+                                                style: TextStyle(
+                                                  color: Colors.grey.shade600,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Container(
+                                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                          decoration: BoxDecoration(
+                                            color: Colors.deepPurple.withOpacity(0.1),
+                                            borderRadius: BorderRadius.circular(20),
+                                          ),
+                                          child: Text(
+                                            '${entry.value}',
+                                            style: TextStyle(
+                                              color: Colors.deepPurple,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   );
-                                  if (menuItem.name.isNotEmpty) {
-                                    itemPrice = menuItem.price;
-                                    break;
-                                  }
                                 }
-                                return ListTile(
-                                  title: Text(entry.key),
-                                  subtitle: Text('₹${itemPrice.toStringAsFixed(2)} each'),
-                                  trailing: Text('${entry.value}'),
-                                );
-                              }
-                              return SizedBox.shrink();
-                            }).toList(),
-                            if (totalAmount > 0) ...[
-                              Divider(),
-                              ListTile(
-                                title: Text('Subtotal'),
-                                trailing: Text('₹${totalAmount.toStringAsFixed(2)}'),
-                              ),
-                              ListTile(
-                                title: Text(
-                                  'Discount',
-                                  style: TextStyle(color: Colors.green),
-                                ),
-                                trailing: Text(
-                                  '-₹${discount.toStringAsFixed(2)}',
-                                  style: TextStyle(color: Colors.green),
-                                ),
-                              ),
-                              ListTile(
-                                title: Text(
-                                  'Total',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.deepPurple,
+                                return SizedBox.shrink();
+                              }).toList(),
+                              if (totalAmount > 0) ...[
+                                SizedBox(height: 16),
+                                Container(
+                                  padding: EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: Colors.deepPurple.withOpacity(0.05),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      _buildPriceRow('Subtotal', totalAmount, Colors.grey.shade700),
+                                      SizedBox(height: 8),
+                                      _buildPriceRow('Discount', -discount, Colors.green),
+                                      Divider(height: 24),
+                                      _buildPriceRow(
+                                        'Total',
+                                        totalAmount - discount,
+                                        Colors.deepPurple,
+                                        isBold: true,
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                trailing: Text(
-                                  '₹${(totalAmount - discount).toStringAsFixed(2)}',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.deepPurple,
-                                  ),
-                                ),
-                              ),
+                              ],
                             ],
                           ],
                         ),
                       ),
                       actions: [
+                        if (cartItems.isNotEmpty) ...[
+                          TextButton(
+                            onPressed: () {
+                              setState(() {
+                                cartItems.clear();
+                                totalItems = 0;
+                                totalAmount = 0;
+                              });
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              'Clear Cart',
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              // Handle order placement
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Order placed successfully!'),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                              setState(() {
+                                cartItems.clear();
+                                totalItems = 0;
+                                totalAmount = 0;
+                              });
+                              Navigator.pop(context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.deepPurple,
+                              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 4,
+                              shadowColor: Colors.deepPurple.withOpacity(0.5),
+                            ),
+                            child: Text(
+                              'Place Order',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ),
+                        ],
                         TextButton(
                           onPressed: () => Navigator.pop(context),
-                          child: Text('Close'),
+                          child: Text(
+                            'Continue Shopping',
+                            style: TextStyle(
+                              color: Colors.deepPurple,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -460,6 +593,30 @@ class _MessScreenState extends State<MessScreen> {
           );
         },
       ),
+    );
+  }
+
+  Widget _buildPriceRow(String label, double amount, Color color, {bool isBold = false}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+            color: color,
+          ),
+        ),
+        Text(
+          '₹${amount.abs().toStringAsFixed(2)}',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+            color: color,
+          ),
+        ),
+      ],
     );
   }
 }
